@@ -71,9 +71,16 @@ public class ExcelXMLConverter {
             Node node = nList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
-                String header = element.getElementsByTagName("HD").item(0).getTextContent();
-                String section_num = element.getElementsByTagName("SECTNO").item(0).getTextContent();
-                String subject = element.getElementsByTagName("SUBJECT").item(0).getTextContent();
+                String header, section_num, subject;
+                try {
+                	header = element.getElementsByTagName("HD").item(0).getTextContent();
+                	section_num = element.getElementsByTagName("SECTNO").item(0).getTextContent();
+                	subject = element.getElementsByTagName("SUBJECT").item(0).getTextContent();
+                } catch (NullPointerException e){
+                	header = "";
+                	section_num = "";
+                	subject = "";
+                }
 
                 NodeList prods = element.getElementsByTagName("SECTION");
                 for (int j = 0; j < prods.getLength(); j++) {
@@ -81,10 +88,18 @@ public class ExcelXMLConverter {
                     Node prod = prods.item(j);
                     if (prod.getNodeType() == Node.ELEMENT_NODE) {
                         Element product = (Element) prod;
-                        String ss_num = product.getElementsByTagName("SECTNO").item(0).getTextContent();
-                        String ss_subject = product.getElementsByTagName("SUBJECT").item(0).getTextContent();
-                        String ss_para = product.getElementsByTagName("P").item(0).getTextContent();
-                        String citation = product.getElementsByTagName("CITATION").item(0).getTextContent();
+                        String ss_num, ss_subject, ss_para, citation;
+                        try{
+                        	ss_num = product.getElementsByTagName("SECTNO").item(0).getTextContent();
+	                        ss_subject = product.getElementsByTagName("SUBJECT").item(0).getTextContent();
+	                        ss_para = product.getElementsByTagName("P").item(0).getTextContent();
+	                        citation = product.getElementsByTagName("CITA").item(0).getTextContent();
+                        } catch (NullPointerException e){
+                        	ss_num = "";
+                        	ss_subject = "";
+                        	ss_para = "";
+                        	citation = "";
+                        }
 
                         Row row = sheet.createRow(rowNum++);
                     
@@ -113,11 +128,11 @@ public class ExcelXMLConverter {
                         else
                         	cell.setCellValue(" Empty ");
 
-                        cell = row.createCell(CITA_COLUMN);
-                        if (citation != null && !citation.isEmpty())
-                        	cell.setCellValue(citation);
-                        else
-                        	cell.setCellValue(" Empty ");
+                        //cell = row.createCell(CITA_COLUMN);
+                        //if (citation != null && !citation.isEmpty())
+                        //	cell.setCellValue(citation);
+                        //else
+                        //	cell.setCellValue(" Empty ");
                         
                     }
                 }
