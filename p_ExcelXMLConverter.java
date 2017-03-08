@@ -66,30 +66,49 @@ public class p_ExcelXMLConverter {
         Document doc = dBuilder.parse(xmlFile);
 
         NodeList nList = doc.getElementsByTagName("P");
-        for (int i = 0; i < nList.getLength(); i++) {
-            System.out.println("Processing element " + (i + 1) + "/" + nList.getLength());
+        for (int i = 0; i < nList.getLength(); i++){
+        	System.out.println("Processing element " + (i + 1) + "/" + nList.getLength());
+            Element node = (Element) nList.item(i);
+        	String ss_para;
+        	try{
+        		ss_para = node.getElementsByTagName("P").item(0).getTextContent();
+        	} catch (NullPointerException e){
+        		ss_para = "";
+        	}
+        	
+        	Row row = sheet.createRow(rowNum++);
+            
+            // check for NULL in .setCellValue()
+            Cell cell = row.createCell(SUBREQ_PARA_COLUMN);
+            if (ss_para != null && !ss_para.equals(""))
+            	cell.setCellValue(ss_para);
+            else
+            	cell.setCellValue(" Empty ");
+        }
+        /*for (int i = 0; i < nList.getLength(); i++) {
+        	System.out.println("Processing element " + (i + 1) + "/" + nList.getLength());
             Node node = nList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-            	Element element = (Element) node;
-            	String ss_para = element.getElementsByTagName("P").item(0).getTextContent();
-            	String citation = element.getElementsByTagName("CITATION").item(0).getTextContent();
-            	
+                Element element = (Element) node;
+                String ss_para;
+                try{
+                	ss_para = element.getElementsByTagName("P").item(0).getTextContent();
+                } catch (NullPointerException e){
+                	ss_para = "";
+                }
+
                 Row row = sheet.createRow(rowNum++);
-                    
+            
                 // check for NULL in .setCellValue()
                 Cell cell = row.createCell(SUBREQ_PARA_COLUMN);
                 if (ss_para != null && !ss_para.equals(""))
                 	cell.setCellValue(ss_para);
                 else
-                	cell.setCellValue(" Empty ");
-                
-                cell = row.createCell(CITA_COLUMN);
-                if (citation != null && !citation.isEmpty())
-                	cell.setCellValue(citation);
-                else
-                	cell.setCellValue(" Empty ");
+                	cell.setCellValue(" ");
             }
         }
+        */
+        
 
         // File fileResult = new File("C:/Desktop/example.xlsx");
         // FileOutputStream fileOut = new FileOutputStream(fileResult);
@@ -130,11 +149,22 @@ public class p_ExcelXMLConverter {
         style.setFont(boldFont);
         style.setAlignment(CellStyle.ALIGN_CENTER);
 
-		Sheet sheet = workbook.createSheet();
+        Sheet sheet = workbook.createSheet();
         rowNum = 0;
         Row row = sheet.createRow(rowNum++);
+        Cell cell = row.createCell(SUBPART_COLUMN);
+        cell.setCellValue("Subpart");
+        cell.setCellStyle(style);
 
-        Cell cell = row.createCell(SUBREQ_PARA_COLUMN);
+        cell = row.createCell(SECTION_NUM_COLUMN);
+        cell.setCellValue("Section Number");
+        cell.setCellStyle(style);
+
+        cell = row.createCell(SECTION_NAME_COLUMN);
+        cell.setCellValue("Section Name");
+        cell.setCellStyle(style);
+
+        cell = row.createCell(SUBREQ_PARA_COLUMN);
         cell.setCellValue("Sub-Requirement");
         cell.setCellStyle(style);
 
