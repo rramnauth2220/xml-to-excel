@@ -66,36 +66,70 @@ public class ss_ExcelXMLConverter {
         Document doc = dBuilder.parse(xmlFile);
 
         NodeList nList = doc.getElementsByTagName("SECTION");
-        for (int i = 0; i < 49; i++) { //up to 48 section#. Change to nList.getLength() when NullPointer error is solved
+        for (int i = 0; i < nList.getLength(); i++) {
             System.out.println("Processing element " + (i + 1) + "/" + nList.getLength());
             Node node = nList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-            	Element element = (Element) node;
-            	String ss_num = element.getElementsByTagName("SECTNO").item(0).getTextContent();
-            	String ss_subject = element.getElementsByTagName("SUBJECT").item(0).getTextContent();
-            	String ss_para = element.getElementsByTagName("P").item(0).getTextContent();
-				
-                Row row = sheet.createRow(rowNum++);
+                Element element = (Element) node;
+                String ss_num, ss_subject, citation;
+                try{
+                	ss_num = element.getElementsByTagName("SECTNO").item(0).getTextContent();
+                } catch (NullPointerException e){
+                	ss_num = "";
+                }
+                try{
+                	ss_subject = element.getElementsByTagName("SUBJECT").item(0).getTextContent();
+                } catch (NullPointerException e){
+                	ss_subject = "";
+                }
+                try{
+                	citation = element.getElementsByTagName("CITA").item(0).getTextContent();
+                } catch (NullPointerException e){
+                	citation = "";
+                }
+
+                NodeList prods = element.getElementsByTagName("P");
+                for (int j = 0; j < prods.getLength(); j++) {
+                	System.out.println("     Processing sub-element " + (j + 1) + "/" + prods.getLength());
+                    Node prod = prods.item(j);
+                    if (prod.getNodeType() == Node.ELEMENT_NODE) {
+                        Element product = (Element) prod;
+                        String ss_para;
+                        try{
+                        	ss_para = product.getElementsByTagName("P").item(0).getTextContent();
+                        } catch (NullPointerException e){
+                        	ss_para = "";
+                        }
+
+                        Row row = sheet.createRow(rowNum++);
                     
-                // check for NULL in .setCellValue()
-                Cell cell = row.createCell(SECTION_NUM_COLUMN);
-                if (ss_num != null && !ss_num.equals(""))
-                	cell.setCellValue(ss_num);
-                else
-                	cell.setCellValue(" Empty ");
+                        // check for NULL in .setCellValue()
+                        Cell cell = row.createCell(SECTION_NUM_COLUMN);
+                        if (ss_num != null && !ss_num.equals(""))
+                        	cell.setCellValue(ss_num);
+                        else
+                        	cell.setCellValue(" ");
 
-                cell = row.createCell(SECTION_NAME_COLUMN);
-                if (ss_subject != null && !ss_subject.equals(""))
-                	cell.setCellValue(ss_subject);
-                else
-                	cell.setCellValue(" Empty ");
+                        cell = row.createCell(SECTION_NAME_COLUMN);
+                        if (ss_subject != null && !ss_subject.equals(""))
+                        	cell.setCellValue(ss_subject);
+                        else
+                        	cell.setCellValue(" ");
 
-                cell = row.createCell(SUBREQ_PARA_COLUMN);
-                if (ss_para != null && !ss_para.equals(""))
-                	cell.setCellValue(ss_para);
-                else
-                	cell.setCellValue(" Empty ");
-                
+                        cell = row.createCell(SUBREQ_PARA_COLUMN);
+                        if (ss_para != null && !ss_para.equals(""))
+                        	cell.setCellValue(ss_para);
+                        else
+                        	cell.setCellValue(" ");
+
+                        cell = row.createCell(CITA_COLUMN);
+                        if (citation != null && !citation.isEmpty())
+                        	cell.setCellValue(citation);
+                        else
+                        	cell.setCellValue(" ");
+                        
+                    }
+                }
             }
         }
 
@@ -138,11 +172,14 @@ public class ss_ExcelXMLConverter {
         style.setFont(boldFont);
         style.setAlignment(CellStyle.ALIGN_CENTER);
 
-		Sheet sheet = workbook.createSheet();
+        Sheet sheet = workbook.createSheet();
         rowNum = 0;
         Row row = sheet.createRow(rowNum++);
-		
-		Cell cell = row.createCell(SECTION_NUM_COLUMN);
+        Cell cell = row.createCell(SUBPART_COLUMN);
+        cell.setCellValue("Subpart");
+        cell.setCellStyle(style);
+
+        cell = row.createCell(SECTION_NUM_COLUMN);
         cell.setCellValue("Section Number");
         cell.setCellStyle(style);
 
@@ -152,6 +189,10 @@ public class ss_ExcelXMLConverter {
 
         cell = row.createCell(SUBREQ_PARA_COLUMN);
         cell.setCellValue("Sub-Requirement");
+        cell.setCellStyle(style);
+
+        cell = row.createCell(CITA_COLUMN);
+        cell.setCellValue("Citation");
         cell.setCellStyle(style);
     }
 }
