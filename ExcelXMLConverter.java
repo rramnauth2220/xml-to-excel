@@ -71,15 +71,22 @@ public class ExcelXMLConverter {
             Node node = nList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
+                
                 String header, section_num, subject;
                 try {
                 	header = element.getElementsByTagName("HD").item(0).getTextContent();
+                } catch (NullPointerException e){
+                	header = " ";
+                }
+                try {
                 	section_num = element.getElementsByTagName("SECTNO").item(0).getTextContent();
+                } catch (NullPointerException e){
+                	section_num = " ";
+                }
+                try {
                 	subject = element.getElementsByTagName("SUBJECT").item(0).getTextContent();
                 } catch (NullPointerException e){
-                	header = "";
-                	section_num = "";
-                	subject = "";
+                	subject = " ";
                 }
 
                 NodeList prods = element.getElementsByTagName("SECTION");
@@ -91,13 +98,22 @@ public class ExcelXMLConverter {
                         String ss_num, ss_subject, ss_para, citation;
                         try{
                         	ss_num = product.getElementsByTagName("SECTNO").item(0).getTextContent();
-	                        ss_subject = product.getElementsByTagName("SUBJECT").item(0).getTextContent();
-	                        ss_para = product.getElementsByTagName("P").item(0).getTextContent();
-	                        citation = product.getElementsByTagName("CITA").item(0).getTextContent();
                         } catch (NullPointerException e){
                         	ss_num = "";
+                        }
+                        try{
+                        	ss_subject = product.getElementsByTagName("SUBJECT").item(0).getTextContent();
+                        } catch (NullPointerException e){
                         	ss_subject = "";
+                        }
+                        try{
+                        	ss_para = product.getElementsByTagName("P").item(0).getTextContent();
+                        } catch (NullPointerException e){
                         	ss_para = "";
+                        }
+                        try{
+                        	citation = product.getElementsByTagName("CITA").item(0).getTextContent();
+                        } catch (NullPointerException e){
                         	citation = "";
                         }
 
@@ -108,31 +124,31 @@ public class ExcelXMLConverter {
                         if (header != null && !header.equals(""))
                         	cell.setCellValue(header);
                         else
-                        	cell.setCellValue(" Empty ");
+                        	cell.setCellValue(" ");
 
                         cell = row.createCell(SECTION_NUM_COLUMN);
                         if (ss_num != null && !ss_num.equals(""))
                         	cell.setCellValue(ss_num);
                         else
-                        	cell.setCellValue(" Empty ");
+                        	cell.setCellValue(" ");
 
                         cell = row.createCell(SECTION_NAME_COLUMN);
                         if (ss_subject != null && !ss_subject.equals(""))
                         	cell.setCellValue(ss_subject);
                         else
-                        	cell.setCellValue(" Empty ");
+                        	cell.setCellValue(" ");
 
                         cell = row.createCell(SUBREQ_PARA_COLUMN);
                         if (ss_para != null && !ss_para.equals(""))
                         	cell.setCellValue(ss_para);
                         else
-                        	cell.setCellValue(" Empty ");
+                        	cell.setCellValue(" ");
 
-                        //cell = row.createCell(CITA_COLUMN);
-                        //if (citation != null && !citation.isEmpty())
-                        //	cell.setCellValue(citation);
-                        //else
-                        //	cell.setCellValue(" Empty ");
+                        cell = row.createCell(CITA_COLUMN);
+                        if (citation != null && !citation.isEmpty())
+                        	cell.setCellValue(citation);
+                        else
+                        	cell.setCellValue(" ");
                         
                     }
                 }
